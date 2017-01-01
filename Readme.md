@@ -28,23 +28,21 @@ Write regular Markdown, but put code blocks in `figure` tags that start with a `
 
 Example:
 
-```markdown
-# Getting started
+    # Getting started
 
-First of all, create a simple `Cargo.toml` file:
+    First of all, create a simple `Cargo.toml` file:
 
-<figure>
-<figcaption>Cargo.toml</figcaption>
+    <figure>
+    <figcaption>Cargo.toml</figcaption>
 
-```toml
-[package]
-authors = ["Pascal Hertleif <killercup@gmail.com>"]
-name = "foo"
-version = "0.1.0"
-```
+    ```toml
+    [package]
+    authors = ["Pascal Hertleif <killercup@gmail.com>"]
+    name = "foo"
+    version = "0.1.0"
+    ```
 
-</figure>
-```
+    </figure>
 
 ### CLI
 
