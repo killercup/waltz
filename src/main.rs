@@ -20,10 +20,14 @@ fn main() {
     let root_logger = slog::Logger::root(drain.fuse(), o!());
     slog_stdlog::set_logger(root_logger.clone()).unwrap();
 
+    let mut args = std::env::args().skip(1);
+    let input_file = args.next().expect("No input file given.\n\tUsage: waltz <input file> [<target directory>]");
+    let target_directory = args.next().unwrap_or("examples".into());
+
     let example = {
         let mut res = String::new();
-        let mut f = File::open("examples/simple_guide/GettingStarted.md").unwrap();
-        f.read_to_string(&mut res).unwrap();
+        let mut f = File::open(&input_file).expect(&format!("Error opening file `{}`", input_file));
+        f.read_to_string(&mut res).expect(&format!("Error reading file `{}`", input_file));
         res
     };
     let parser = Parser::new(&example);
@@ -31,6 +35,6 @@ fn main() {
     let code_blocks = waltz::extract_code_blocks(parser);
 
     for code_block in &code_blocks {
-        code_block.to_file("foobar").unwrap();
+        code_block.to_file(&target_directory).expect("Error writing code block to file");
     }
 }
