@@ -10,7 +10,7 @@ keywords = ["markdown", "documentation", "testing"]
 categories = ["development-tools::testing"]
 
 [dependencies]
-waltz = { path = "../waltz" }
+waltz = "0.2"
 pulldown-cmark = "0.0.8"
 slog = "1.4.0"
 slog-envlogger = "0.5.0"
