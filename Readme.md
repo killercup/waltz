@@ -24,7 +24,7 @@ $ cargo install --git https://github.com/killercup/waltz
 
 ### Markdown syntax
 
-Write regular Markdown, but put code blocks in `figure` tags that start with a `figcaption` tag that contains nothing but the filename (incl. relative path) of the file this code should end up in.
+Write regular Markdown, but add an addional file flag to your code blocks, so they have `lang,file=path` after the tripple back ticks. (This is the relative path of the file this code should end up in).
 
 Example:
 
@@ -32,17 +32,12 @@ Example:
 
     First of all, create a simple `Cargo.toml` file:
 
-    <figure>
-    <figcaption>Cargo.toml</figcaption>
-
-    ```toml
+    ```toml,file=Cargo.toml
     [package]
     authors = ["Pascal Hertleif <killercup@gmail.com>"]
     name = "foo"
     version = "0.1.0"
     ```
-
-    </figure>
 
 ### CLI
 
