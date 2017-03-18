@@ -32,9 +32,9 @@ fn main() {
     };
     let parser = Parser::new(&example);
 
-    let code_blocks = waltz::extract_code_blocks(parser);
+    let code_blocks = waltz::extract_code_blocks(parser).unwrap();
 
-    for code_block in &code_blocks {
+    for code_block in code_blocks.iter().filter(|x| !x.filename.is_empty()) {
         code_block.to_file(&target_directory).expect("Error writing code block to file");
     }
 }
