@@ -3,7 +3,11 @@ name = "waltz_cli"
 version = "0.1.0"
 authors = ["Pascal Hertleif <killercup@gmail.com>"]
 readme = "../Readme.md"
+license = "MIT OR Apache-2.0"
+include = ["src/**/*", "Cargo.toml"]
 repository = "https://github.com/killercup/waltz"
+keywords = ["markdown", "documentation", "testing"]
+categories = ["development-tools::testing"]
 
 [dependencies]
 waltz = { path = "../waltz" }

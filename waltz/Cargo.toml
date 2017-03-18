@@ -3,7 +3,11 @@ authors = ["Pascal Hertleif <killercup@gmail.com>"]
 name = "waltz"
 version = "0.2.0"
 readme = "../Readme.md"
+license = "MIT OR Apache-2.0"
 repository = "https://github.com/killercup/waltz"
+documentation = "https://docs.rs/waltz"
+keywords = ["markdown", "documentation", "testing"]
+categories = ["development-tools::testing"]
 
 [dependencies]
 log = "0.3.6"
