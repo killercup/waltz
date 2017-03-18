@@ -4,11 +4,7 @@ Extract code files from Markdown files.
 
 Write guides in Markdown with code blocks that belong in several files, and let _waltz_ extract the code for you so you can build/run/test it easily.
 
-Meant as a companion to [tango].
-
-[tango]: https://github.com/pnkfelix/tango
-
-## DANGER: Will eat you laundry
+## DANGER: Will eat your laundry
 
 This is highly experimental. Has not been tested with real-world code.
 
@@ -38,6 +34,12 @@ Example:
     name = "foo"
     version = "0.1.0"
     ```
+
+### As Rust library
+
+Add `waltz = "0.2"` to your dependencies and use it!
+
+**[API documentation](https://docs.rs/waltz/)**
 
 ### CLI
 
