@@ -1,3 +1,10 @@
 language: rust
 rust:
 - stable
+- beta
+cache: cargo
+script:
+- cargo test --all
+notifications:
+  email:
+    on_success: never
