@@ -2,7 +2,6 @@ extern crate slog_stdlog;
 extern crate slog_envlogger;
 extern crate slog_term;
 #[macro_use(o)] extern crate slog;
-#[macro_use] extern crate log;
 
 extern crate pulldown_cmark;
 
@@ -34,7 +33,7 @@ fn main() {
 
     let code_blocks = waltz::extract_code_blocks(parser).unwrap();
 
-    for code_block in code_blocks.iter().filter(|x| !x.filename.is_empty()) {
+    for code_block in code_blocks.iter().filter(|cb| cb.has_filename()) {
         code_block.to_file(&target_directory).expect("Error writing code block to file");
     }
 }

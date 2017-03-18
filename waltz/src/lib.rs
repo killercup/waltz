@@ -1,5 +1,15 @@
-extern crate pulldown_cmark;
+//! Extract code files from Markdown files.
+//!
+//! Write guides in Markdown with code blocks that belong in several files, and
+//! let _waltz_ extract the code for you so you can build/run/test it easily.
+//!
+//! Meant as a companion to [tango].
+//!
+//! [tango]: https://github.com/pnkfelix/tango
 
+#![deny(warnings, missing_docs)]
+
+extern crate pulldown_cmark;
 extern crate regex;
 #[macro_use] extern crate lazy_static;
 #[macro_use] extern crate error_chain;
@@ -11,7 +21,7 @@ mod errors;
 use errors::*;
 
 mod code_block;
-use code_block::CodeBlock;
+pub use code_block::CodeBlock;
 
 mod code_flags;
 
@@ -21,6 +31,28 @@ enum Location {
     InCodeBlock,
 }
 
+
+/// Extract code blocks from Markdown events
+///
+/// The input needs to be an Iterator as returned by [pulldown-cmark]'s parser.
+///
+/// [pulldown-cmark]: https://github.com/google/pulldown-cmark
+///
+/// # Examples
+///
+/// ```rust
+/// extern crate waltz;
+/// extern crate pulldown_cmark;
+///
+/// let example = r#"
+///  ```rust,file=examples/demo.rs
+///  pub const: &'static str = "Yeah!";
+///  ```
+/// "#;
+/// let markdown = pulldown_cmark::Parser::new(example);
+/// let code_blocks = waltz::extract_code_blocks(markdown).unwrap();
+/// assert_eq!(code_blocks[0].filename(), "examples/demo.rs".to_string());
+/// ```
 pub fn extract_code_blocks<'md, I: Iterator<Item=Event<'md>>>(md_events: I) -> Result<Vec<CodeBlock>> {
     let mut code_blocks = Vec::new();
     let mut location = Location::SomewhereUnimportant;
@@ -32,11 +64,11 @@ pub fn extract_code_blocks<'md, I: Iterator<Item=Event<'md>>>(md_events: I) -> R
                 location = Location::InCodeBlock;
                 if let Some(filename) = code_flags::get_filename(&flags) {
                     info!("found code block with file name `{}`", filename);
-                    current_code_block.filename = filename;
+                    current_code_block.set_filename(filename);
                 }
             },
             (Event::Text(code), Location::InCodeBlock) => {
-                current_code_block.content.push_str(&code);
+                current_code_block.push_content(&code);
             },
             (Event::End(Tag::CodeBlock(_lang)), Location::InCodeBlock) => {
                 location = Location::SomewhereUnimportant;
@@ -50,4 +82,3 @@ pub fn extract_code_blocks<'md, I: Iterator<Item=Event<'md>>>(md_events: I) -> R
 
     Ok(code_blocks)
 }
-
