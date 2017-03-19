@@ -20,6 +20,8 @@ use pulldown_cmark::{Event, Tag};
 mod errors;
 use errors::*;
 
+pub use errors::Error;
+
 mod code_block;
 pub use code_block::CodeBlock;
 
