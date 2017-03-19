@@ -68,6 +68,8 @@ impl CodeBlock {
         create_dir_all(parent)?;
         let mut f = File::create(&path)?;
         f.write_all(self.content.as_bytes())?;
+
+        info!("Wrote file {:?}", path);
         Ok(f)
     }
 }

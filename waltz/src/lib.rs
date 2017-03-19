@@ -63,8 +63,10 @@ pub fn extract_code_blocks<'md, I: Iterator<Item=Event<'md>>>(md_events: I) -> R
             (Event::Start(Tag::CodeBlock(flags)), Location::SomewhereUnimportant) => {
                 location = Location::InCodeBlock;
                 if let Some(filename) = code_flags::get_filename(&flags) {
-                    info!("found code block with file name `{}`", filename);
+                    trace!("found code block with file name `{}`", filename);
                     current_code_block.set_filename(filename);
+                } else {
+                    trace!("found code block without file name");
                 }
             },
             (Event::Text(code), Location::InCodeBlock) => {
@@ -72,7 +74,7 @@ pub fn extract_code_blocks<'md, I: Iterator<Item=Event<'md>>>(md_events: I) -> R
             },
             (Event::End(Tag::CodeBlock(_lang)), Location::InCodeBlock) => {
                 location = Location::SomewhereUnimportant;
-                info!("end of code block for file `{}`", current_code_block.filename());
+                trace!("end of code block for file `{}`", current_code_block.filename());
                 code_blocks.push(current_code_block.clone());
                 current_code_block = CodeBlock::default();
             },
