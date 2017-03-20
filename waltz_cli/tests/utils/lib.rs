@@ -1,6 +1,7 @@
 extern crate tempdir;
 extern crate unindent;
 extern crate assert_cli;
+extern crate difference;
 
 use std::fs::{File, create_dir_all};
 use std::io::{Read, Write};
@@ -80,6 +81,16 @@ impl Assert {
 
         cli_assertions(cmd).unwrap();
     }
+
+    fn cargo_check(&self) -> &Self {
+        CliAssert::command(&[
+            "cargo", "check",
+            "--manifest-path", self.output_dir.join("Cargo.toml").to_str().unwrap(),
+        ])
+        .unwrap();
+
+        self
+    }
 }
 
 #[derive(Debug)]
@@ -110,7 +121,7 @@ impl FileAssert {
 
     fn unwrap(self) {
         let dir = self.working_dir.expect(&format!("No working dir set for `{}`", self.path));
-        let path = PathBuf::from(dir).join(self.path);
+        let path = PathBuf::from(dir).join(&self.path);
 
         let mut f = File::open(&path).expect(&format!("no file at {:?}", path));
 
@@ -118,7 +129,10 @@ impl FileAssert {
             let mut content = String::new();
             f.read_to_string(&mut content).expect(&format!("failed to read {:?}", path));
 
-            assert_eq!(content, unindent(&expected_content));
+            let diff = difference::Changeset::new(&content, &unindent(&expected_content), "\n");
+            if diff.distance > 0 {
+                panic!("Content of `{}` not as expected:\n{}", self.path, diff);
+            }
         }
     }
 }
