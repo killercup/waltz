@@ -20,4 +20,4 @@ loggerv = "0.2.0"
 [dev-dependencies]
 tempdir = "0.3"
 unindent = "0.1"
-assert_cli = { git = "https://github.com/killercup/assert_cli", branch = "refactor/everything" }
+assert_cli = "0.4"
