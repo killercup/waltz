@@ -6,7 +6,7 @@ pub fn get_filename(flags: &str) -> Option<String> {
     }
 
     if let Some(captures) = RE.captures(flags) {
-        info!("found code block flags: {:?}", captures);
+        trace!("found code block flags: {:?}", captures);
 
         if let Some(filename) = captures.name("file") {
             return Some(filename.as_str().to_string());

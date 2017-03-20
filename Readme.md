@@ -44,6 +44,7 @@ Add `waltz = "0.2"` to your dependencies and use it!
 ### CLI
 
 ```bash
+$ cargo install waltz_cli
 $ waltz
 [...]
 Usage: waltz <input file> [<target directory>]

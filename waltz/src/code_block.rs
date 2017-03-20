@@ -38,7 +38,7 @@ impl CodeBlock {
     /// Get the filename, or, if it doesn't exist, a place holder.
     pub fn filename(&self) -> &str {
         match self.filename {
-            Some(ref f) if !f.is_empty() => &f,
+            Some(ref f) if !f.is_empty() => f,
             _ => "<unnamed>",
         }
     }
@@ -68,6 +68,8 @@ impl CodeBlock {
         create_dir_all(parent)?;
         let mut f = File::create(&path)?;
         f.write_all(self.content.as_bytes())?;
+
+        info!("Wrote file {:?}", path);
         Ok(f)
     }
 }
