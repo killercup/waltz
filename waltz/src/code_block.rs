@@ -1,5 +1,5 @@
 use std::default::Default;
-use std::fs::{File, create_dir_all};
+use std::fs::{OpenOptions, File, create_dir_all};
 use std::io::Write;
 use std::path::Path;
 
@@ -66,7 +66,8 @@ impl CodeBlock {
         };
 
         create_dir_all(parent)?;
-        let mut f = File::create(&path)?;
+
+        let mut f = OpenOptions::new().create(true).append(true).open(&path)?;
         f.write_all(self.content.as_bytes())?;
 
         info!("Wrote file {:?}", path);
