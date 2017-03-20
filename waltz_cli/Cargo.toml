@@ -2,16 +2,18 @@
 name = "waltz_cli"
 version = "0.1.0"
 authors = ["Pascal Hertleif <killercup@gmail.com>"]
+description = "Extract code blocks from Markdown and save them as files."
 readme = "../Readme.md"
 license = "MIT OR Apache-2.0"
 include = ["src/**/*", "Cargo.toml"]
 repository = "https://github.com/killercup/waltz"
+documentation = "https://github.com/killercup/waltz"
 keywords = ["markdown", "documentation", "testing"]
 categories = ["development-tools::testing"]
 
 [dependencies]
 clap = "2.21.1"
-waltz = "0.2"
+waltz = "0.2.1"
 pulldown-cmark = "0.0.8"
 error-chain = "0.10.0"
 log = "0.3.6"
@@ -21,3 +23,6 @@ loggerv = "0.2.0"
 tempdir = "0.3"
 unindent = "0.1"
 assert_cli = "0.4"
+
+[badges]
+travis-ci = { repository = "killercup/waltz" }
