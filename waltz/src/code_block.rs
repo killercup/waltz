@@ -38,7 +38,7 @@ impl CodeBlock {
     /// Get the filename, or, if it doesn't exist, a place holder.
     pub fn filename(&self) -> &str {
         match self.filename {
-            Some(ref f) if !f.is_empty() => &f,
+            Some(ref f) if !f.is_empty() => f,
             _ => "<unnamed>",
         }
     }
