@@ -1,5 +1,5 @@
-#[cfg(test)]
-include!("_utils.rs");
+#![allow(dead_code)]
+include!("utils/lib.rs");
 
 #[test]
 fn simple() {
