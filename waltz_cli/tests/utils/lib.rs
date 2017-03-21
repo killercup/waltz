@@ -5,7 +5,7 @@ extern crate difference;
 
 use std::fs::{File, create_dir_all};
 use std::io::{Read, Write};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::default::Default;
 use tempdir::TempDir;
 
@@ -18,6 +18,46 @@ fn given(file_content: &str) -> Assert {
 
 fn file(path: &str) -> FileAssert {
     FileAssert::with_path(path)
+}
+
+fn waltz(cwd: &Path) -> CliAssert {
+    CliAssert::main_binary()
+        .with_args(&[
+            "-vvv",
+            cwd.join("test.md").to_str().unwrap(),
+            "-o", cwd.to_str().unwrap(),
+        ])
+        .succeeds()
+}
+
+fn main(cwd: &Path) -> CliAssert {
+    CliAssert::command(&[
+        "cargo", "run",
+        "--manifest-path", cwd.join("Cargo.toml").to_str().unwrap(),
+    ])
+}
+
+fn binary(cwd: &Path, name: &str) -> CliAssert {
+    CliAssert::command(&[
+        "cargo", "run",
+        "--manifest-path", cwd.join("Cargo.toml").to_str().unwrap(),
+        "--bin", name,
+    ])
+}
+
+fn cargo(cwd: &Path, subcommand: &str) -> CliAssert {
+    CliAssert::command(&[
+        "cargo", subcommand,
+        "--manifest-path", cwd.join("Cargo.toml").to_str().unwrap(),
+    ])
+}
+
+fn cargo_check(cwd: &Path) -> CliAssert {
+    cargo(cwd, "check")
+}
+
+fn cargo_test(cwd: &Path) -> CliAssert {
+    cargo(cwd, "test")
 }
 
 #[derive(Debug)]
@@ -53,42 +93,16 @@ impl Assert {
         a
     }
 
-    fn waltz(&self) -> &Self {
-        CliAssert::main_binary()
-            .with_args(&[
-                "-vvv",
-                self.output_dir.join("test.md").to_str().unwrap(),
-                "-o", self.output_dir.to_str().unwrap(),
-            ])
-            .succeeds()
-            .unwrap();
+    fn running<F>(&self, cmd: F) -> &Self where
+        F: for<'cwd> Fn(&'cwd Path) -> CliAssert,
+    {
+        cmd(&self.output_dir).unwrap();
         self
     }
 
     fn creates(&self, fa: FileAssert) -> &Self {
         fa.context(self.output_dir.to_owned())
             .unwrap();
-        self
-    }
-
-    fn cargo_run<F>(&self, cli_assertions: F) where
-        F: Fn(CliAssert) -> CliAssert,
-     {
-        let cmd = CliAssert::command(&[
-            "cargo", "run",
-            "--manifest-path", self.output_dir.join("Cargo.toml").to_str().unwrap(),
-        ]);
-
-        cli_assertions(cmd).unwrap();
-    }
-
-    fn cargo_check(&self) -> &Self {
-        CliAssert::command(&[
-            "cargo", "check",
-            "--manifest-path", self.output_dir.join("Cargo.toml").to_str().unwrap(),
-        ])
-        .unwrap();
-
         self
     }
 }
