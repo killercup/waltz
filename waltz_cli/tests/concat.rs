@@ -46,7 +46,7 @@ fn concat() {
         }
         ```
     "#)
-    .waltz()
+    .running(waltz)
     .creates(file("Cargo.toml").containing(r#"
         [package]
         authors = ["Pascal Hertleif <killercup@gmail.com>"]
@@ -70,5 +70,5 @@ fn concat() {
             }
         }
     "#))
-    .cargo_check();
+    .running(cargo_check);
 }

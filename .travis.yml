@@ -6,6 +6,14 @@ rust:
 cache: cargo
 script:
 - cargo test --all
+matrix:
+  include:
+  - rust: nightly-2017-03-15
+    env: CLIPPY=YESPLEASE
+    script: |
+        cargo install clippy --vers "0.0.120"
+        (cd waltz && cargo clippy) &&
+        (cd waltz_cli && cargo clippy)
 notifications:
   email:
     on_success: never

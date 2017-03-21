@@ -23,7 +23,7 @@ fn simple() {
         }
         ```
     "#)
-    .waltz()
+    .running(waltz)
     .creates(file("Cargo.toml").containing(r#"
         [package]
         authors = ["Pascal Hertleif <killercup@gmail.com>"]
@@ -35,7 +35,7 @@ fn simple() {
             println!("Hello, world!");
         }
     "#))
-    .cargo_run(|cmd| cmd.prints("Hello, world!"));
+    .running(|cwd| main(cwd).prints("Hello, world!"));
 }
 
 #[test]
@@ -62,12 +62,10 @@ fn complex_paths() {
         }
         ```
     "#)
-    .waltz()
+    .running(waltz)
     .creates(file("Cargo.toml"))
     .creates(file("src/bin/lolwut/main.rs"))
-    .cargo_run(|cmd|
-        cmd
-        .with_args(&["--bin", "lolwut"])
+    .running(|cwd| binary(cwd, "lolwut")
         .prints("Sup dawg")
     );
 }
