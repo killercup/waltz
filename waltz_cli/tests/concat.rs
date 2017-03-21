@@ -1,5 +1,5 @@
-#![allow(dead_code)]
-include!("utils/lib.rs");
+mod utils;
+use utils::*;
 
 #[test]
 fn concat() {

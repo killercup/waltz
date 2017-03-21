@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 extern crate tempdir;
 extern crate unindent;
 extern crate assert_cli;
@@ -7,20 +9,21 @@ use std::fs::{File, create_dir_all};
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 use std::default::Default;
-use tempdir::TempDir;
 
-use unindent::unindent;
-use assert_cli::Assert as CliAssert;
+use self::tempdir::TempDir;
+use self::unindent::unindent;
+use self::assert_cli::Assert as CliAssert;
+use self::difference::Changeset;
 
-fn given(file_content: &str) -> Assert {
+pub fn given(file_content: &str) -> Assert {
     Assert::with_file(file_content)
 }
 
-fn file(path: &str) -> FileAssert {
+pub fn file(path: &str) -> FileAssert {
     FileAssert::with_path(path)
 }
 
-fn waltz(cwd: &Path) -> CliAssert {
+pub fn waltz(cwd: &Path) -> CliAssert {
     CliAssert::main_binary()
         .with_args(&[
             "-vvv",
@@ -30,14 +33,14 @@ fn waltz(cwd: &Path) -> CliAssert {
         .succeeds()
 }
 
-fn main(cwd: &Path) -> CliAssert {
+pub fn main(cwd: &Path) -> CliAssert {
     CliAssert::command(&[
         "cargo", "run",
         "--manifest-path", cwd.join("Cargo.toml").to_str().unwrap(),
     ])
 }
 
-fn binary(cwd: &Path, name: &str) -> CliAssert {
+pub fn binary(cwd: &Path, name: &str) -> CliAssert {
     CliAssert::command(&[
         "cargo", "run",
         "--manifest-path", cwd.join("Cargo.toml").to_str().unwrap(),
@@ -52,16 +55,16 @@ fn cargo(cwd: &Path, subcommand: &str) -> CliAssert {
     ])
 }
 
-fn cargo_check(cwd: &Path) -> CliAssert {
+pub fn cargo_check(cwd: &Path) -> CliAssert {
     cargo(cwd, "check")
 }
 
-fn cargo_test(cwd: &Path) -> CliAssert {
+pub fn cargo_test(cwd: &Path) -> CliAssert {
     cargo(cwd, "test")
 }
 
 #[derive(Debug)]
-struct Assert {
+pub struct Assert {
     tmpdir: TempDir,
     output_dir: PathBuf,
 }
@@ -93,14 +96,14 @@ impl Assert {
         a
     }
 
-    fn running<F>(&self, cmd: F) -> &Self where
+    pub fn running<F>(&self, cmd: F) -> &Self where
         F: for<'cwd> Fn(&'cwd Path) -> CliAssert,
     {
         cmd(&self.output_dir).unwrap();
         self
     }
 
-    fn creates(&self, fa: FileAssert) -> &Self {
+    pub fn creates(&self, fa: FileAssert) -> &Self {
         fa.context(self.output_dir.to_owned())
             .unwrap();
         self
@@ -108,7 +111,7 @@ impl Assert {
 }
 
 #[derive(Debug)]
-struct FileAssert {
+pub struct FileAssert {
     path: String,
     content: Option<String>,
     working_dir: Option<PathBuf>,
@@ -123,7 +126,7 @@ impl FileAssert {
         }
     }
 
-    fn containing<I: Into<String>>(mut self, content: I) -> Self {
+    pub fn containing<I: Into<String>>(mut self, content: I) -> Self {
         self.content = Some(content.into());
         self
     }
@@ -143,7 +146,7 @@ impl FileAssert {
             let mut content = String::new();
             f.read_to_string(&mut content).expect(&format!("failed to read {:?}", path));
 
-            let diff = difference::Changeset::new(&content, &unindent(&expected_content), "\n");
+            let diff = Changeset::new(&content, &unindent(&expected_content), "\n");
             if diff.distance > 0 {
                 panic!("Content of `{}` not as expected:\n{}", self.path, diff);
             }
