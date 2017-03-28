@@ -3,7 +3,8 @@ use utils::*;
 
 #[test]
 fn simple() {
-    given(r#"
+    given(
+        r#"
         # Getting started
 
         First of all, create a simple `Cargo.toml` file:
@@ -22,25 +23,35 @@ fn simple() {
             println!("Hello, world!");
         }
         ```
-    "#)
-    .running(waltz)
-    .creates(file("Cargo.toml").containing(r#"
+    "#,
+    )
+            .running(waltz)
+            .creates(
+                file("Cargo.toml").containing(
+                    r#"
         [package]
         authors = ["Pascal Hertleif <killercup@gmail.com>"]
         name = "foo"
         version = "0.1.0"
-    "#))
-    .creates(file("src/main.rs").containing(r#"
+    "#,
+                ),
+            )
+            .creates(
+                file("src/main.rs").containing(
+                    r#"
         fn main() {
             println!("Hello, world!");
         }
-    "#))
-    .running(|cwd| main(cwd).prints("Hello, world!"));
+    "#,
+                ),
+            )
+            .running(|cwd| main(cwd).prints("Hello, world!"));
 }
 
 #[test]
 fn complex_paths() {
-    given(r#"
+    given(
+        r#"
         First off:
 
         ```toml,file=Cargo.toml
@@ -61,11 +72,10 @@ fn complex_paths() {
             println!("Sup dawg I herd u likd nested dirs");
         }
         ```
-    "#)
-    .running(waltz)
-    .creates(file("Cargo.toml"))
-    .creates(file("src/bin/lolwut/main.rs"))
-    .running(|cwd| binary(cwd, "lolwut")
-        .prints("Sup dawg")
-    );
+    "#,
+    )
+            .running(waltz)
+            .creates(file("Cargo.toml"))
+            .creates(file("src/bin/lolwut/main.rs"))
+            .running(|cwd| binary(cwd, "lolwut").prints("Sup dawg"));
 }

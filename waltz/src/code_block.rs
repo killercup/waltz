@@ -62,7 +62,7 @@ impl CodeBlock {
         let path = Path::new(root.as_ref()).join(&self.filename());
         let parent = match path.parent() {
             Some(p) => p,
-            None => bail!("Can't create file for code block, path has no parent directory"),
+            None => bail!("Can't create file for code block, path has no parent directory",),
         };
 
         create_dir_all(parent)?;
@@ -82,7 +82,8 @@ mod test {
 
     #[test]
     fn parsing() {
-        let example = unindent(r#"
+        let example = unindent(
+            r#"
         # Lorem ipsum
 
         ## Shell
@@ -98,7 +99,8 @@ mod test {
             println!("Dolor sit amet");
         }
         ```
-        "#);
+        "#,
+        );
 
         let markdown = ::pulldown_cmark::Parser::new(&example);
         let code_blocks = ::extract_code_blocks(markdown).unwrap();

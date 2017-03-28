@@ -37,8 +37,8 @@ fn try_main() -> Result<()> {
     // Parse markdown file
     let input = {
         let mut res = String::new();
-        let mut f = File::open(input_file)
-            .chain_err(|| format!("Error opening file `{}`", input_file))?;
+        let mut f =
+            File::open(input_file).chain_err(|| format!("Error opening file `{}`", input_file))?;
         f.read_to_string(&mut res)
             .chain_err(|| format!("Error reading file `{}`", input_file))?;
         info!("Read file `{}`", input_file);
@@ -48,7 +48,10 @@ fn try_main() -> Result<()> {
 
     let code_blocks = waltz::extract_code_blocks(parser)?;
 
-    info!("Found {} code blocks (not all might have file names)", code_blocks.len());
+    info!(
+        "Found {} code blocks (not all might have file names)",
+        code_blocks.len(),
+    );
 
     // Output files
     for code_block in code_blocks.iter().filter(|cb| cb.has_filename()) {
