@@ -1,6 +1,6 @@
 [package]
 name = "waltz_cli"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Pascal Hertleif <killercup@gmail.com>"]
 description = "Extract code blocks from Markdown and save them as files."
 readme = "../Readme.md"
@@ -10,6 +10,10 @@ repository = "https://github.com/killercup/waltz"
 documentation = "https://github.com/killercup/waltz"
 keywords = ["markdown", "documentation", "testing"]
 categories = ["development-tools::testing"]
+
+[[bin]]
+name = "waltz"
+path = "src/main.rs"
 
 [dependencies]
 clap = "2.21.1"
