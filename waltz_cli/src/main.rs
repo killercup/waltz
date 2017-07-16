@@ -24,13 +24,14 @@ use errors::*;
 #[structopt(name = "waltz", author = "Pascal Hertlei")]
 struct App {
     /// The target directory
-    #[structopt(short = "o", default_value = "examples")]
     #[structopt(short = "o", long = "target_dir", default_value = "examples")]
     target_dir: String,
     /// Enable logging, use multiple `v`s to increase verbosity
-    #[structopt(short = "v")]
     #[structopt(short = "v", long = "verbose")]
     verbosity: u64,
+    /// Run blocks marked as `run=cmd` with `cmd` while writing files
+    #[structopt(short = "r", long = "run", default_value = "false")]
+    run: bool,
     /// The input markdown file
     #[structopt(name = "FILES")]
     input_file: String,
@@ -65,6 +66,25 @@ quick_main!(|| -> Result<()> {
     for code_block in code_blocks.iter().filter(|cb| cb.has_filename()) {
         code_block.to_file(target_directory)
             .chain_err(|| "Error writing code block to file")?;
+
+        if let Some(cmd) = code_block.run() {
+            use std::process::Command;
+            let filename = code_block.filename().unwrap();
+
+            let test = Command::new(&cmd)
+                .args(&[&filename])
+                .current_dir(target_directory)
+                .output()?;
+
+            if !test.status.success() {
+                error!("Script {} failed.\nStdout:\n{}\n\nStderr:\n{}",
+                    filename,
+                    String::from_utf8_lossy(&test.stdout),
+                    String::from_utf8_lossy(&test.stderr)
+                );
+                bail!("Failed to run `{}` script. Aborting.", filename);
+            }
+        }
     }
 
     Ok(())
