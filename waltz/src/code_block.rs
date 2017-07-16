@@ -4,6 +4,7 @@ use std::io::Write;
 use std::path::Path;
 
 use errors::*;
+use code_flags::CodeFlags;
 
 /// Markdown code block
 ///
@@ -11,36 +12,32 @@ use errors::*;
 /// extracted.
 #[derive(Debug, Clone)]
 pub struct CodeBlock {
-    filename: Option<String>,
+    flags: Option<CodeFlags>,
     content: String,
 }
 
 impl Default for CodeBlock {
     fn default() -> Self {
-        CodeBlock { filename: None, content: String::new() }
+        CodeBlock { flags: None, content: String::new() }
     }
 }
 
 impl CodeBlock {
     /// Set the code block's filename
-    pub fn set_filename(&mut self, filename: String) {
-        self.filename = if filename.is_empty() { None } else { Some(filename) };
+    pub(crate) fn set_flags(&mut self, flags: CodeFlags) {
+        self.flags = Some(flags);
     }
 
     /// Does the code block has a (non-empty) filename?
     pub fn has_filename(&self) -> bool {
-        match self.filename {
-            Some(ref f) if !f.is_empty() => true,
-            _ => false,
-        }
+        self.filename().is_some()
     }
 
     /// Get the filename, or, if it doesn't exist, a place holder.
-    pub fn filename(&self) -> &str {
-        match self.filename {
-            Some(ref f) if !f.is_empty() => f,
-            _ => "<unnamed>",
-        }
+    pub fn filename(&self) -> Option<String> {
+        if let Some(ref flags) = self.flags {
+            flags.filename()
+        } else { None }
     }
 
     /// Get the codeblock's content
@@ -49,17 +46,19 @@ impl CodeBlock {
     }
 
     /// Add to the code block's content
-    pub fn push_content(&mut self, new_content: &str) {
+    pub(crate) fn push_content(&mut self, new_content: &str) {
         self.content.push_str(new_content);
     }
 
     /// Write codeblock to a file in directory `root`
     pub fn to_file<P: AsRef<Path>>(&self, root: P) -> Result<File> {
-        if !self.has_filename() {
-            bail!("Can't create file from code block with empty file name");
-        }
+        let filename = if let Some(f) = self.filename() {
+            f
+        } else {
+            bail!("Can't create file from code block with empty file name")
+        };
 
-        let path = Path::new(root.as_ref()).join(&self.filename());
+        let path = Path::new(root.as_ref()).join(filename);
         let parent = match path.parent() {
             Some(p) => p,
             None => bail!("Can't create file for code block, path has no parent directory"),
@@ -107,7 +106,7 @@ mod test {
         assert!(!code_blocks[0].has_filename());
         assert_eq!(code_blocks[0].content().trim(), r#"$ echo "yeah!""#);
 
-        assert_eq!(code_blocks[1].filename(), "src/lib.rs".to_string());
+        assert_eq!(code_blocks[1].filename(), Some("src/lib.rs".to_string()));
         assert!(code_blocks[1].content().contains("Dolor sit amet"));
     }
 }

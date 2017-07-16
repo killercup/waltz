@@ -7,11 +7,9 @@
 //!
 //! [tango]: https://github.com/pnkfelix/tango
 
-#![deny(warnings, missing_docs)]
+#![deny(missing_docs)]
 
 extern crate pulldown_cmark;
-extern crate regex;
-#[macro_use] extern crate lazy_static;
 #[macro_use] extern crate error_chain;
 #[macro_use] extern crate log;
 
@@ -26,6 +24,7 @@ mod code_block;
 pub use code_block::CodeBlock;
 
 mod code_flags;
+use code_flags::CodeFlags;
 
 #[derive(Debug, Clone, Copy)]
 enum Location {
@@ -53,7 +52,7 @@ enum Location {
 /// "#;
 /// let markdown = pulldown_cmark::Parser::new(example);
 /// let code_blocks = waltz::extract_code_blocks(markdown).unwrap();
-/// assert_eq!(code_blocks[0].filename(), "examples/demo.rs".to_string());
+/// assert_eq!(code_blocks[0].filename(), Some("examples/demo.rs".to_string()));
 /// ```
 pub fn extract_code_blocks<'md, I: Iterator<Item=Event<'md>>>(md_events: I) -> Result<Vec<CodeBlock>> {
     let mut code_blocks = Vec::new();
@@ -64,19 +63,26 @@ pub fn extract_code_blocks<'md, I: Iterator<Item=Event<'md>>>(md_events: I) -> R
         match (event, location) {
             (Event::Start(Tag::CodeBlock(flags)), Location::SomewhereUnimportant) => {
                 location = Location::InCodeBlock;
-                if let Some(filename) = code_flags::get_filename(&flags) {
-                    trace!("found code block with file name `{}`", filename);
-                    current_code_block.set_filename(filename);
-                } else {
-                    trace!("found code block without file name");
-                }
+                let flags = flags.parse::<CodeFlags>()?;
+
+                trace!("found code block{}",
+                    if let Some(f) = flags.filename() {
+                       format!(" with file name `{}`", f)
+                    } else {
+                        format!(" without a file name")
+                    }
+                );
+
+                current_code_block.set_flags(flags);
             },
             (Event::Text(code), Location::InCodeBlock) => {
                 current_code_block.push_content(&code);
             },
             (Event::End(Tag::CodeBlock(_lang)), Location::InCodeBlock) => {
                 location = Location::SomewhereUnimportant;
-                trace!("end of code block for file `{}`", current_code_block.filename());
+                trace!("end of code block for file `{}`",
+                    current_code_block.filename().unwrap_or_else(|| "<unnamed>".to_string())
+                );
                 code_blocks.push(current_code_block.clone());
                 current_code_block = CodeBlock::default();
             },
