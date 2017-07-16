@@ -28,16 +28,27 @@ impl CodeBlock {
         self.flags = Some(flags);
     }
 
-    /// Does the code block has a (non-empty) filename?
+    /// Does the code block have a (non-empty) filename?
     pub fn has_filename(&self) -> bool {
         self.filename().is_some()
     }
 
-    /// Get the filename, or, if it doesn't exist, a place holder.
+    /// Get the filename if it exists
     pub fn filename(&self) -> Option<String> {
         if let Some(ref flags) = self.flags {
             flags.filename()
-        } else { None }
+        } else {
+            None
+        }
+    }
+
+    /// Get the `run` flag if it exists
+    pub fn run(&self) -> Option<String> {
+        if let Some(ref flags) = self.flags {
+            flags.run()
+        } else {
+            None
+        }
     }
 
     /// Get the codeblock's content
