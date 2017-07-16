@@ -61,7 +61,7 @@ impl FromStr for CodeFlags {
             // Might want to allow `run` as well as `run=bash` later
             let run_prefix = "run=";
             if flag.starts_with(run_prefix) {
-                ensure!(filename.is_none(), ErrorKind::DuplicateRun);
+                ensure!(run.is_none(), ErrorKind::DuplicateRun);
                 let r = &flag[run_prefix.len()..];
                 run = Some(r.to_string());
             }
@@ -80,41 +80,48 @@ mod test {
     use super::CodeFlags;
 
     macro_rules! flag_check {
-        ($flags:expr => None) => {
+        ($flags:expr => $field:ident None) => {
             assert_eq!(
-                $flags.parse::<CodeFlags>().unwrap().filename(),
+                $flags.parse::<CodeFlags>().unwrap().$field(),
                 None
             );
         };
-        ($flags:expr => $filename:expr) => {
+        ($flags:expr => $field:ident $value:expr) => {
             assert_eq!(
-                $flags.parse::<CodeFlags>().unwrap().filename(),
-                Some($filename.to_string())
+                $flags.parse::<CodeFlags>().unwrap().$field(),
+                Some($value.to_string())
             );
         };
     }
 
     #[test]
     fn simple_flags() {
-        flag_check!("rust,file=Cargo.toml" => "Cargo.toml");
-        flag_check!("rust,file=src/lib.rs" => "src/lib.rs");
-        flag_check!("rust,file=../foo/__bar.rs" => "../foo/__bar.rs");
+        flag_check!("rust,file=Cargo.toml" => filename "Cargo.toml");
+        flag_check!("rust,file=src/lib.rs" => filename "src/lib.rs");
+        flag_check!("rust,file=../foo/__bar.rs" => filename "../foo/__bar.rs");
     }
 
     #[test]
     fn no_filename_in_flags() {
-        flag_check!("rust,ignore" => None);
-        flag_check!("rust,foo=bar" => None);
+        flag_check!("rust,ignore" => filename None);
+        flag_check!("rust,foo=bar" => filename None);
     }
 
     #[test]
     fn all_the_flags() {
-        flag_check!("rust,ignore,file=Cargo.toml" => "Cargo.toml");
-        flag_check!("rust,norun,file=src/lib.rs" => "src/lib.rs");
+        flag_check!("rust,ignore,file=Cargo.toml" => filename "Cargo.toml");
+        flag_check!("rust,norun,file=src/lib.rs" => filename "src/lib.rs");
     }
 
     #[test]
     fn no_lang() {
-        flag_check!("file=src/lib.rs" => None);
+        flag_check!("file=src/lib.rs" => filename None);
+    }
+
+    #[test]
+    fn run_flag() {
+        flag_check!("sh,file=src/lib.rs,run=sh" => run "sh");
+        flag_check!("file=src/lib.rs,run=sh" => run "sh");
+        flag_check!("run=sh" => run None);
     }
 }
