@@ -3,6 +3,7 @@ extern crate waltz;
 extern crate pulldown_cmark;
 extern crate unindent;
 
+#[allow(unused_macros)]
 macro_rules! assert_files_generated {
     ($name:ident: $input:expr => [$($filename:expr => $content:expr),+]) => {
         #[test]

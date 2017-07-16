@@ -12,7 +12,7 @@ use std::default::Default;
 
 use self::tempdir::TempDir;
 use self::unindent::unindent;
-use self::assert_cli::Assert as CliAssert;
+pub use self::assert_cli::Assert as CliAssert;
 use self::difference::Changeset;
 
 pub fn given(file_content: &str) -> Assert {
@@ -27,8 +27,19 @@ pub fn waltz(cwd: &Path) -> CliAssert {
     CliAssert::main_binary()
         .with_args(&[
             "-vvv",
-            cwd.join("test.md").to_str().unwrap(),
             "-o", cwd.to_str().unwrap(),
+            cwd.join("test.md").to_str().unwrap(),
+        ])
+        .succeeds()
+}
+
+pub fn waltz_test(cwd: &Path) -> CliAssert {
+    CliAssert::main_binary()
+        .with_args(&[
+            "-vvv",
+            "--run",
+            "-o", cwd.to_str().unwrap(),
+            cwd.join("test.md").to_str().unwrap(),
         ])
         .succeeds()
 }

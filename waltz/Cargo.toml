@@ -14,8 +14,6 @@ categories = ["development-tools::testing"]
 [dependencies]
 log = "0.3.6"
 pulldown-cmark = "0.0.8"
-regex = "0.2.0"
-lazy_static = "0.2.4"
 error-chain = "0.10.0"
 
 [dev-dependencies]

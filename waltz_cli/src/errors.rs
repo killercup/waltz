@@ -1,6 +1,7 @@
 error_chain! {
     foreign_links {
-        Cli(::clap::Error);
+        Io(::std::io::Error);
+        Cli(::structopt::clap::Error);
         Logging(::log::SetLoggerError);
         Waltz(::waltz::Error);
     }
