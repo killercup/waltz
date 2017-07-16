@@ -16,7 +16,8 @@ name = "waltz"
 path = "src/main.rs"
 
 [dependencies]
-clap = "2.21.1"
+structopt = "0.0.5"
+structopt-derive = "0.0.5"
 waltz = "0.3.0"
 pulldown-cmark = "0.0.8"
 error-chain = "0.10.0"
