@@ -1,0 +1,20 @@
+name: waltz
+version: master
+summary: Extract code files from Markdown
+description: |
+  Write guides in Markdown with code blocks that belong in several files, and
+  let waltz extract the code for you so you can build/run/test it easily.
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: strict
+
+apps:
+  waltz:
+    command: waltz
+    plugs: [home]
+
+parts:
+  waltz:
+    source: .
+    plugin: rust
+    source-subdir: waltz_cli
