@@ -17,12 +17,9 @@ path = "src/main.rs"
 
 [dependencies]
 structopt = "0.1"
-structopt-derive = "0.1"
 waltz = "0.3.0"
 pulldown-cmark = "0.1"
-error-chain = "0.10.0"
-log = "0.4"
-loggerv = "0.7.0"
+quicli = "0.1.2"
 
 [dev-dependencies]
 tempdir = "0.3"

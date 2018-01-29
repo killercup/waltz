@@ -9,18 +9,15 @@
 
 #![deny(missing_docs)]
 
-#[macro_use] extern crate error_chain;
+#[macro_use] extern crate failure_derive;
+#[macro_use] extern crate failure;
+
 #[macro_use] extern crate log;
 #[macro_use] extern crate lazy_static;
 extern crate regex;
 extern crate pulldown_cmark;
 
 use pulldown_cmark::{Event, Tag};
-
-mod errors;
-use errors::*;
-
-pub use errors::Error;
 
 mod code_block;
 pub use code_block::CodeBlock;
@@ -55,7 +52,7 @@ enum Location {
 /// let code_blocks = waltz::extract_code_blocks(markdown).unwrap();
 /// assert_eq!(code_blocks[0].filename(), Some("examples/demo.rs".to_string()));
 /// ```
-pub fn extract_code_blocks<'md, I: Iterator<Item=Event<'md>>>(md_events: I) -> Result<Vec<CodeBlock>> {
+pub fn extract_code_blocks<'md, I: Iterator<Item=Event<'md>>>(md_events: I) -> Result<Vec<CodeBlock>, failure::Error> {
     let mut code_blocks = Vec::new();
     let mut location = Location::SomewhereUnimportant;
     let mut current_code_block = CodeBlock::default();

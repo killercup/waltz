@@ -18,29 +18,20 @@ impl CodeFlags {
     }
 }
 
-error_chain! {
-    types {
-        Error, ErrorKind, ResultExt, CodeFlagsResult;
-    }
-
-    errors {
-        NoFlags {
-            description("Code block has no flags")
-        }
-        EmptyFilename {
-            description("File name attribute exists but is empty")
-        }
-        DuplicateFilename {
-           description("File name flag found twice")
-        }
-        DuplicateRun {
-           description("Run flag found twice")
-        }
-    }
+#[derive(Fail, Debug, Clone, Copy, Hash, PartialEq, Eq)]
+enum Error {
+    #[fail(display = "Code block has no flags")]
+    NoFlags,
+    #[fail(display = "File name attribute exists but is empty")]
+    EmptyFilename,
+    #[fail(display = "File name flag found twice")]
+    DuplicateFilename,
+    #[fail(display = "Run flag found twice")]
+    DuplicateRun,
 }
 
 impl FromStr for CodeFlags {
-    type Err = Error;
+    type Err = ::failure::Error;
 
     fn from_str(flags: &str) -> Result<Self, Self::Err> {
         lazy_static! {
@@ -48,21 +39,21 @@ impl FromStr for CodeFlags {
         }
 
         let mut flags = SPLIT.split(flags);
-        let lang = flags.next().map(str::to_string).ok_or(ErrorKind::NoFlags)?;
+        let lang = flags.next().map(str::to_string).ok_or(Error::NoFlags)?;
         let mut filename = None;
         let mut run = None;
 
         for flag in flags {
             if let Some(f) = flag.splitn(2, "file=").nth(1) {
-                ensure!(filename.is_none(), ErrorKind::DuplicateFilename);
-                ensure!(!f.is_empty(), ErrorKind::EmptyFilename);
+                ensure!(filename.is_none(), Error::DuplicateFilename);
+                ensure!(!f.is_empty(), Error::EmptyFilename);
                 filename = Some(f.to_string());
             }
 
             // Might want to allow `run` as well as `run=bash` later
             let run_prefix = "run=";
             if flag.starts_with(run_prefix) {
-                ensure!(run.is_none(), ErrorKind::DuplicateRun);
+                ensure!(run.is_none(), Error::DuplicateRun);
                 let r = &flag[run_prefix.len()..];
                 run = Some(r.to_string());
             }
