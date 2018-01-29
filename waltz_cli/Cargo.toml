@@ -1,6 +1,6 @@
 [package]
 name = "waltz_cli"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Pascal Hertleif <killercup@gmail.com>"]
 description = "Extract code blocks from Markdown and save them as files."
 readme = "../Readme.md"
@@ -17,7 +17,7 @@ path = "src/main.rs"
 
 [dependencies]
 structopt = "0.1"
-waltz = "0.3.0"
+waltz = "0.4.0"
 pulldown-cmark = "0.1"
 quicli = "0.1.2"
 
