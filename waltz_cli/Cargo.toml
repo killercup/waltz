@@ -16,13 +16,13 @@ name = "waltz"
 path = "src/main.rs"
 
 [dependencies]
-structopt = "0.0.5"
-structopt-derive = "0.0.5"
+structopt = "0.1"
+structopt-derive = "0.1"
 waltz = "0.3.0"
-pulldown-cmark = "0.0.8"
+pulldown-cmark = "0.1"
 error-chain = "0.10.0"
-log = "0.3.6"
-loggerv = "0.2.0"
+log = "0.4"
+loggerv = "0.7.0"
 
 [dev-dependencies]
 tempdir = "0.3"

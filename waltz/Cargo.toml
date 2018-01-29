@@ -12,8 +12,8 @@ keywords = ["markdown", "documentation", "testing"]
 categories = ["development-tools::testing"]
 
 [dependencies]
-log = "0.3.6"
-pulldown-cmark = "0.0.8"
+log = "0.4"
+pulldown-cmark = "0.1"
 error-chain = "0.10.0"
 regex = "0.2.5"
 lazy_static = "1.0.0"
