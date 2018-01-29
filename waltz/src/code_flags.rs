@@ -1,4 +1,5 @@
 use std::str::FromStr;
+use regex::Regex;
 
 #[derive(Debug, Clone, PartialEq, Hash)]
 pub struct CodeFlags {
@@ -8,10 +9,6 @@ pub struct CodeFlags {
 }
 
 impl CodeFlags {
-    pub fn lang(&self) -> &str {
-        &self.lang
-    }
-
     pub fn filename(&self) -> Option<String> {
         self.filename.clone()
     }
@@ -46,7 +43,11 @@ impl FromStr for CodeFlags {
     type Err = Error;
 
     fn from_str(flags: &str) -> Result<Self, Self::Err> {
-        let mut flags = flags.split(',');
+        lazy_static! {
+            static ref SPLIT: Regex = Regex::new(r"[\s,]").unwrap();
+        }
+
+        let mut flags = SPLIT.split(flags);
         let lang = flags.next().map(str::to_string).ok_or(ErrorKind::NoFlags)?;
         let mut filename = None;
         let mut run = None;
@@ -95,22 +96,34 @@ mod test {
     }
 
     #[test]
-    fn simple_flags() {
+    fn simple_flags_comma() {
         flag_check!("rust,file=Cargo.toml" => filename "Cargo.toml");
         flag_check!("rust,file=src/lib.rs" => filename "src/lib.rs");
         flag_check!("rust,file=../foo/__bar.rs" => filename "../foo/__bar.rs");
     }
 
     #[test]
+    fn simple_flags_space() {
+        flag_check!("rust file=Cargo.toml" => filename "Cargo.toml");
+        flag_check!("rust file=src/lib.rs" => filename "src/lib.rs");
+        flag_check!("rust file=../foo/__bar.rs" => filename "../foo/__bar.rs");
+    }
+
+    #[test]
     fn no_filename_in_flags() {
         flag_check!("rust,ignore" => filename None);
+        flag_check!("rust ignore" => filename None);
         flag_check!("rust,foo=bar" => filename None);
+        flag_check!("rust foo=bar" => filename None);
     }
 
     #[test]
     fn all_the_flags() {
         flag_check!("rust,ignore,file=Cargo.toml" => filename "Cargo.toml");
+        flag_check!("rust ignore file=Cargo.toml" => filename "Cargo.toml");
+
         flag_check!("rust,norun,file=src/lib.rs" => filename "src/lib.rs");
+        flag_check!("rust norun file=src/lib.rs" => filename "src/lib.rs");
     }
 
     #[test]

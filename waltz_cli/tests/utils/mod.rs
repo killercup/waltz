@@ -149,7 +149,7 @@ impl FileAssert {
 
     fn unwrap(self) {
         let dir = self.working_dir.expect(&format!("No working dir set for `{}`", self.path));
-        let path = PathBuf::from(dir).join(&self.path);
+        let path = dir.join(&self.path);
 
         let mut f = File::open(&path).expect(&format!("no file at {:?}", path));
 

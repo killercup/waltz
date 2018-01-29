@@ -9,9 +9,11 @@
 
 #![deny(missing_docs)]
 
-extern crate pulldown_cmark;
 #[macro_use] extern crate error_chain;
 #[macro_use] extern crate log;
+#[macro_use] extern crate lazy_static;
+extern crate regex;
+extern crate pulldown_cmark;
 
 use pulldown_cmark::{Event, Tag};
 
@@ -45,11 +47,10 @@ enum Location {
 /// extern crate waltz;
 /// extern crate pulldown_cmark;
 ///
-/// let example = r#"
-///  ```rust,file=examples/demo.rs
-///  pub const: &'static str = "Yeah!";
-///  ```
-/// "#;
+/// let example =
+///     r#"```rust,file=examples/demo.rs
+///     pub const: &'static str = "Yeah!";
+///     ```"#;
 /// let markdown = pulldown_cmark::Parser::new(example);
 /// let code_blocks = waltz::extract_code_blocks(markdown).unwrap();
 /// assert_eq!(code_blocks[0].filename(), Some("examples/demo.rs".to_string()));
@@ -69,7 +70,7 @@ pub fn extract_code_blocks<'md, I: Iterator<Item=Event<'md>>>(md_events: I) -> R
                     if let Some(f) = flags.filename() {
                        format!(" with file name `{}`", f)
                     } else {
-                        format!(" without a file name")
+                        " without a file name".to_string()
                     }
                 );
 
