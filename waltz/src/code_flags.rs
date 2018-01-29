@@ -9,10 +9,6 @@ pub struct CodeFlags {
 }
 
 impl CodeFlags {
-    pub fn lang(&self) -> &str {
-        &self.lang
-    }
-
     pub fn filename(&self) -> Option<String> {
         self.filename.clone()
     }

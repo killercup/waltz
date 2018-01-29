@@ -70,7 +70,7 @@ pub fn extract_code_blocks<'md, I: Iterator<Item=Event<'md>>>(md_events: I) -> R
                     if let Some(f) = flags.filename() {
                        format!(" with file name `{}`", f)
                     } else {
-                        format!(" without a file name")
+                        " without a file name".to_string()
                     }
                 );
 
