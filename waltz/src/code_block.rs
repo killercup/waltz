@@ -3,7 +3,6 @@ use std::fs::{OpenOptions, File, create_dir_all};
 use std::io::Write;
 use std::path::Path;
 
-use errors::*;
 use code_flags::CodeFlags;
 
 /// Markdown code block
@@ -62,7 +61,7 @@ impl CodeBlock {
     }
 
     /// Write codeblock to a file in directory `root`
-    pub fn to_file<P: AsRef<Path>>(&self, root: P) -> Result<File> {
+    pub fn to_file<P: AsRef<Path>>(&self, root: P) -> Result<File, ::failure::Error> {
         let filename = if let Some(f) = self.filename() {
             f
         } else {
