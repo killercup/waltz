@@ -4,5 +4,5 @@ members = [
   "waltz_cli",
 ]
 
-[replace]
-"waltz:0.3.0" = { path = "waltz" }
+[patch.crates-io]
+"waltz" = { path = "waltz" }
