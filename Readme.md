@@ -37,7 +37,7 @@ Example:
 
 ### As Rust library
 
-Add `waltz = "0.2"` to your dependencies and use it!
+Add `waltz = "0.4"` to your dependencies and use it!
 
 **[API documentation](https://docs.rs/waltz/)**
 
