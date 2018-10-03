@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.4] - 2018-10-03
+
+### Changed
+
+- Update dependencies
+- Build binaries
+
 ## [0.1.3] - 2018-01-29
 
 ### Changed
@@ -33,7 +40,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Initial version based on waltz 0.2 crate
 
-[Unreleased]: https://github.com/killercup/waltz/compare/waltz_cli-0.4.0...HEAD
+[Unreleased]: https://github.com/killercup/waltz/compare/waltz_cli-0.1.4...HEAD
+[0.1.4]: https://github.com/killercup/waltz/compare/waltz_cli-v0.1.3...waltz_cli-0.1.4
 [0.1.3]: https://github.com/killercup/waltz/compare/waltz_cli-v0.1.2...waltz_cli-0.1.3
 [0.1.2]: https://github.com/killercup/waltz/compare/waltz_cli-0.1.1...waltz_cli-v0.1.2
 [0.1.1]: https://github.com/killercup/waltz/compare/waltz_cli-0.1.0...waltz_cli-0.1.1
