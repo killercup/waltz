@@ -16,10 +16,7 @@ fn help() {
         .succeeds()
         .unwrap();
 
-    Assert::main_binary()
-        .with_args(&["-h"])
-        .succeeds()
-        .unwrap();
+    Assert::main_binary().with_args(&["-h"]).succeeds().unwrap();
 }
 
 #[test]
@@ -29,8 +26,5 @@ fn version() {
         .succeeds()
         .unwrap();
 
-    Assert::main_binary()
-        .with_args(&["-V"])
-        .succeeds()
-        .unwrap();
+    Assert::main_binary().with_args(&["-V"]).succeeds().unwrap();
 }

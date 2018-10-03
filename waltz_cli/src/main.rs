@@ -1,7 +1,8 @@
 extern crate pulldown_cmark;
 extern crate waltz;
 
-#[macro_use] extern crate quicli;
+#[macro_use]
+extern crate quicli;
 use quicli::prelude::*;
 
 use pulldown_cmark::Parser;
@@ -12,15 +13,14 @@ struct Cli {
     /// The target directory
     #[structopt(short = "o", long = "target_dir", default_value = "examples")]
     target_dir: String,
-    /// Enable logging, use multiple `v`s to increase verbosity
-    #[structopt(short = "v", long = "verbose")]
-    verbosity: u64,
     /// Run blocks marked as `run=cmd` with `cmd` while writing files
-    #[structopt(short = "r", long = "run", default_value = "false")]
+    #[structopt(short = "r", long = "run")]
     run: bool,
     /// The input markdown file
     #[structopt(name = "FILES")]
     input_file: String,
+    #[structopt(flatten)]
+    verbosity: Verbosity,
 }
 
 main!(|args: Cli, log_level: verbosity| {
@@ -30,13 +30,17 @@ main!(|args: Cli, log_level: verbosity| {
 
     let code_blocks = waltz::extract_code_blocks(parser)?;
 
-    info!("Found {} code blocks (not all might have file names)", code_blocks.len());
+    info!(
+        "Found {} code blocks (not all might have file names)",
+        code_blocks.len()
+    );
 
     // Output files
     let target_directory = &args.target_dir;
 
     for code_block in code_blocks.iter().filter(|cb| cb.has_filename()) {
-        code_block.to_file(target_directory)
+        code_block
+            .to_file(target_directory)
             .with_context(|e| format!("Error writing code block to file: {}", e))?;
 
         if let Some(cmd) = code_block.run() {
@@ -49,7 +53,8 @@ main!(|args: Cli, log_level: verbosity| {
                 .output()?;
 
             if !test.status.success() {
-                error!("Script {} failed.\nStdout:\n{}\n\nStderr:\n{}",
+                error!(
+                    "Script {} failed.\nStdout:\n{}\n\nStderr:\n{}",
                     filename,
                     String::from_utf8_lossy(&test.stdout),
                     String::from_utf8_lossy(&test.stderr)

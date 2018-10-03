@@ -1,5 +1,5 @@
-extern crate waltz;
 extern crate pulldown_cmark;
+extern crate waltz;
 
 use std::fs::File;
 use std::io::Read;

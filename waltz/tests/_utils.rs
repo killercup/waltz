@@ -1,7 +1,7 @@
-extern crate tempdir;
-extern crate waltz;
 extern crate pulldown_cmark;
+extern crate tempdir;
 extern crate unindent;
+extern crate waltz;
 
 #[allow(unused_macros)]
 macro_rules! assert_files_generated {

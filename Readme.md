@@ -8,7 +8,17 @@ Write guides in Markdown with code blocks that belong in several files, and let 
 
 This is highly experimental. Has not been tested with real-world code.
 
-## Install
+## Install binary
+
+There are pre-compiled binaries for newer releases that you can find on the [releases page](https://github.com/killercup/waltz/releases).
+
+Alternatively, install it like this:
+
+```bash
+curl -LSfs https://japaric.github.io/trust/install.sh | sh -s -- --git killercup/waltz
+```
+
+## Install manually
 
 Make sure you have Rust and Cargo installed.
 
@@ -16,11 +26,13 @@ Make sure you have Rust and Cargo installed.
 $ cargo install --git https://github.com/killercup/waltz
 ```
 
+Alternatively, clone this repository and run `cargo install --path waltz_cli`.
+
 ## Usage
 
 ### Markdown syntax
 
-Write regular Markdown, but add an addional file flag to your code blocks, so they have `lang,file=path` after the tripple back ticks. (This is the relative path of the file this code should end up in).
+Write regular Markdown, but add an additional file flag to your code blocks, so they have `lang,file=path` after the triple back ticks. (This is the relative path of the file this code should end up in).
 
 Example:
 

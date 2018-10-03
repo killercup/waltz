@@ -3,6 +3,3 @@ members = [
   "waltz",
   "waltz_cli",
 ]
-
-[patch.crates-io]
-"waltz" = { path = "waltz" }

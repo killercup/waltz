@@ -1,22 +1,65 @@
+dist: trusty
 language: rust
-rust:
-- stable
-- beta
-- nightly
-cache: cargo
+services: docker
+sudo: required
+
+env:
+  global:
+  - CRATE_NAME=waltz
+
+before_install:
+- set -e
+- rustup self update
+
+install:
+- sh ci/install.sh
+- source ~/.cargo/env || true
+
 script:
-- cargo test --all
+- bash ci/script.sh
+
+after_script: set +e
+
+before_deploy:
+- sh ci/before_deploy.sh
+
 matrix:
   include:
-  - rust: nightly-2018-01-28
+  - rust: 1.29.1
     env: CLIPPY=YESPLEASE
-    script: |
-        cargo install clippy --vers "0.0.183"
-        (cd waltz && cargo clippy) &&
-        (cd waltz_cli && cargo clippy)
-notifications:
-  email:
-    on_success: never
+    before_script: rustup component add clippy-preview
+    script: cargo clippy --all -- -D warnings
+  - rust: 1.29.1
+    env: RUSTFMT=YESPLEASE
+    before_script: rustup component add rustfmt-preview
+    script: cargo fmt --all -- --check
+
+  # dist targets from https://github.com/japaric/trust
+  - env: TARGET=x86_64-unknown-linux-gnu
+  - env: TARGET=x86_64-unknown-linux-musl
+  - env: TARGET=x86_64-apple-darwin
+    os: osx
+
+deploy:
+  api_key:
+    secure: Q8oSba0ABrbl+HwIkhrmOHxEAepxaiT2P5uOsq8ah/Zvy1LL28EDwmLxzIcQcuaJpXx9bUuzcvFXbrLoIkqLggYwssE5F9BSPxjin72j4cNAAwRbyyQyToOGw1IV5BhU4vrYjwUk2ik4JbROYquJaOh17TRUPljDl6WDa5J7cIZnyd1MRv8XijDvYoaZGn/8+aV1XBaKYbpqDE9Ck+p8SZfis8fvj6eyJYRvbrxbsU+RpNQHyivHIEgcCVL+GCLyigj/Ka06J6In1t3xTtOOaLhY4i0NOI9f+IWN9rqBdyeQvoLtzfOmReKlw9wo8Pw0rNxBNtdr8lS8nKKmOYsYhcxEVUM+DXGO7p+mB3qR3AX1h+PqdUZRPls3ZXtvlzfmD5xD3H/uczVtN4N3aU1cKivCq0RAqMudQHMkbaVlGRKqlSJxRyyK/phCXzd0W6G9zQMF9D5mbYuMjU5ADHw9jyygDBOhm427XzXZDXET3EGrElV1W0kp8AT+WFlquz3+R7luhQKGi1QGcRwRLG2UZMCmr6aHJt8/RaTpeM8+Ps9Ay+HiO9/Kkypn84wNewAtgPDFW301HuUEMdoqcM+WyNVJzBPKss2+tuiHWxeCvRkylMnpmBJRCqjSU+50J84qX92dcQdCopnH6bokbSci7qF3i9krA97p8bmvmxxDlMY=
+  file_glob: true
+  file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
+  on:
+    condition: $TRAVIS_RUST_VERSION = stable
+    tags: true
+  provider: releases
+  skip_cleanup: true
+
 branches:
   except:
   - staging.tmp
+
+notifications:
+  email:
+    on_success: never
+
+cache: cargo
+before_cache:
+# Travis can't cache files that are not readable by "others"
+- chmod -R a+r $HOME/.cargo

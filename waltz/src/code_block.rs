@@ -1,5 +1,5 @@
 use std::default::Default;
-use std::fs::{OpenOptions, File, create_dir_all};
+use std::fs::{create_dir_all, File, OpenOptions};
 use std::io::Write;
 use std::path::Path;
 
@@ -17,7 +17,10 @@ pub struct CodeBlock {
 
 impl Default for CodeBlock {
     fn default() -> Self {
-        CodeBlock { flags: None, content: String::new() }
+        CodeBlock {
+            flags: None,
+            content: String::new(),
+        }
     }
 }
 
@@ -91,7 +94,8 @@ mod test {
 
     #[test]
     fn parsing() {
-        let example = unindent(r#"
+        let example = unindent(
+            r#"
         # Lorem ipsum
 
         ## Shell
@@ -107,7 +111,8 @@ mod test {
             println!("Dolor sit amet");
         }
         ```
-        "#);
+        "#,
+        );
 
         let markdown = ::pulldown_cmark::Parser::new(&example);
         let code_blocks = ::extract_code_blocks(markdown).unwrap();

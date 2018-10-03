@@ -3,7 +3,8 @@ use utils::*;
 
 #[test]
 fn run_script() {
-    given(r#"
+    given(
+        r#"
         # Getting started
 
         First of all, create a simple `Cargo.toml` file:
@@ -39,47 +40,47 @@ fn run_script() {
         ```sh,file=scripts/0-test.sh,run=sh
         cargo test
         ```
-    "#)
-    .running(waltz_test)
+    "#,
+    ).running(waltz_test)
     .creates(file("Cargo.toml"))
     .creates(file("src/lib.rs"))
-    .creates(file("scripts/0-test.sh"))
-    ;
+    .creates(file("scripts/0-test.sh"));
 }
 
 #[test]
 fn failing_script() {
-    given("
+    given(
+        "
         You can't run `cargo` in a directory with not `Cargo.toml`:
 
         ```sh,file=foo.sh,run=sh
         cargo build
         ```
-    ")
-   .running(|cwd|
+    ",
+    ).running(|cwd| {
         CliAssert::main_binary()
-        .with_args(&[
-            "-vvv", "-r",
-            "-o", cwd.to_str().unwrap(),
-            cwd.join("test.md").to_str().unwrap(),
-        ])
-        .fails()
-        .prints_error("Script foo.sh failed.")
-        .prints_error("could not find `Cargo.toml` in")
-   )
-   ;
+            .with_args(&[
+                "-vvv",
+                "-r",
+                "-o",
+                cwd.to_str().unwrap(),
+                cwd.join("test.md").to_str().unwrap(),
+            ]).fails()
+            .prints_error("Script foo.sh failed.")
+            .prints_error("could not find `Cargo.toml` in")
+    });
 }
 
 #[test]
 fn script_with_side_effects() {
-    given("
+    given(
+        "
         You can easily create empty file on the command line using
 
         ```sh,file=scripts/0-touch.sh,run=sh
         touch foobar
         ```
-    ")
-    .running(waltz_test)
-    .creates(file("foobar"))
-    ;
+    ",
+    ).running(waltz_test)
+    .creates(file("foobar"));
 }

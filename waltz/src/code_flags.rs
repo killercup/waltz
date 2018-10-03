@@ -1,5 +1,5 @@
-use std::str::FromStr;
 use regex::Regex;
+use std::str::FromStr;
 
 #[derive(Debug, Clone, PartialEq, Hash)]
 pub struct CodeFlags {
@@ -73,10 +73,7 @@ mod test {
 
     macro_rules! flag_check {
         ($flags:expr => $field:ident None) => {
-            assert_eq!(
-                $flags.parse::<CodeFlags>().unwrap().$field(),
-                None
-            );
+            assert_eq!($flags.parse::<CodeFlags>().unwrap().$field(), None);
         };
         ($flags:expr => $field:ident $value:expr) => {
             assert_eq!(
