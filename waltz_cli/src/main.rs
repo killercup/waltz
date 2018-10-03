@@ -12,15 +12,14 @@ struct Cli {
     /// The target directory
     #[structopt(short = "o", long = "target_dir", default_value = "examples")]
     target_dir: String,
-    /// Enable logging, use multiple `v`s to increase verbosity
-    #[structopt(short = "v", long = "verbose")]
-    verbosity: u64,
     /// Run blocks marked as `run=cmd` with `cmd` while writing files
-    #[structopt(short = "r", long = "run", default_value = "false")]
+    #[structopt(short = "r", long = "run")]
     run: bool,
     /// The input markdown file
     #[structopt(name = "FILES")]
     input_file: String,
+    #[structopt(flatten)]
+    verbosity: Verbosity,
 }
 
 main!(|args: Cli, log_level: verbosity| {
