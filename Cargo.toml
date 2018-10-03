@@ -3,3 +3,6 @@ members = [
   "waltz",
   "waltz_cli",
 ]
+
+[profile.release]
+lto = true

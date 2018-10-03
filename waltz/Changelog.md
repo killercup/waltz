@@ -8,22 +8,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.4.1] - 2018-01-29
 
+### Changed
+
 - Update dependencies
 
 ## [0.4.0] - 2018-01-29
 
-## Added
+### Added
 
 - Support space separated code block flags
 - First draft of "Run" mode
 
-## Removed
+### Removed
 
 - Error type no longer public
 
 ## [0.3.0] - 2017-03-20
 
-## Changed
+### Changed
 
 - Append to files by default
 

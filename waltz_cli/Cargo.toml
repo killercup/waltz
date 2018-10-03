@@ -29,6 +29,3 @@ difference = "1.0"
 
 [badges]
 travis-ci = { repository = "killercup/waltz" }
-
-[profile.release]
-lto = true
