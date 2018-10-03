@@ -3,7 +3,8 @@ use utils::*;
 
 #[test]
 fn concat() {
-    given(r#"
+    given(
+        r#"
         # Getting started
 
         First of all, create a simple `Cargo.toml` file:
@@ -45,15 +46,17 @@ fn concat() {
             }
         }
         ```
-    "#)
-    .running(waltz)
-    .creates(file("Cargo.toml").containing(r#"
+    "#,
+    ).running(waltz)
+    .creates(file("Cargo.toml").containing(
+        r#"
         [package]
         authors = ["Pascal Hertleif <killercup@gmail.com>"]
         name = "foo"
         version = "0.1.0"
-    "#))
-    .creates(file("src/lib.rs").containing(r#"
+    "#,
+    )).creates(file("src/lib.rs").containing(
+        r#"
         struct Foo {
             x: i32,
         }
@@ -69,6 +72,6 @@ fn concat() {
                 Foo { x: 42 }
             }
         }
-    "#))
-    .running(cargo_check);
+    "#,
+    )).running(cargo_check);
 }

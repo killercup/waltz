@@ -1,19 +1,19 @@
 #![allow(dead_code)]
 
-extern crate tempdir;
-extern crate unindent;
 extern crate assert_cli;
 extern crate difference;
+extern crate tempdir;
+extern crate unindent;
 
-use std::fs::{File, create_dir_all};
+use std::default::Default;
+use std::fs::{create_dir_all, File};
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
-use std::default::Default;
 
-use self::tempdir::TempDir;
-use self::unindent::unindent;
 pub use self::assert_cli::Assert as CliAssert;
 use self::difference::Changeset;
+use self::tempdir::TempDir;
+use self::unindent::unindent;
 
 pub fn given(file_content: &str) -> Assert {
     Assert::with_file(file_content)
@@ -27,10 +27,10 @@ pub fn waltz(cwd: &Path) -> CliAssert {
     CliAssert::main_binary()
         .with_args(&[
             "-vvv",
-            "-o", cwd.to_str().unwrap(),
+            "-o",
+            cwd.to_str().unwrap(),
             cwd.join("test.md").to_str().unwrap(),
-        ])
-        .succeeds()
+        ]).succeeds()
 }
 
 pub fn waltz_test(cwd: &Path) -> CliAssert {
@@ -38,31 +38,38 @@ pub fn waltz_test(cwd: &Path) -> CliAssert {
         .with_args(&[
             "-vvv",
             "--run",
-            "-o", cwd.to_str().unwrap(),
+            "-o",
+            cwd.to_str().unwrap(),
             cwd.join("test.md").to_str().unwrap(),
-        ])
-        .succeeds()
+        ]).succeeds()
 }
 
 pub fn main(cwd: &Path) -> CliAssert {
     CliAssert::command(&[
-        "cargo", "run",
-        "--manifest-path", cwd.join("Cargo.toml").to_str().unwrap(),
+        "cargo",
+        "run",
+        "--manifest-path",
+        cwd.join("Cargo.toml").to_str().unwrap(),
     ])
 }
 
 pub fn binary(cwd: &Path, name: &str) -> CliAssert {
     CliAssert::command(&[
-        "cargo", "run",
-        "--manifest-path", cwd.join("Cargo.toml").to_str().unwrap(),
-        "--bin", name,
+        "cargo",
+        "run",
+        "--manifest-path",
+        cwd.join("Cargo.toml").to_str().unwrap(),
+        "--bin",
+        name,
     ])
 }
 
 fn cargo(cwd: &Path, subcommand: &str) -> CliAssert {
     CliAssert::command(&[
-        "cargo", subcommand,
-        "--manifest-path", cwd.join("Cargo.toml").to_str().unwrap(),
+        "cargo",
+        subcommand,
+        "--manifest-path",
+        cwd.join("Cargo.toml").to_str().unwrap(),
     ])
 }
 
@@ -96,18 +103,17 @@ impl Assert {
     fn with_file(content: &str) -> Self {
         let a = Assert::default();
 
-        create_dir_all(&a.output_dir)
-            .expect("error creating output dir");
+        create_dir_all(&a.output_dir).expect("error creating output dir");
 
-        let mut f = File::create(a.output_dir.join("test.md"))
-            .expect("error create md file");
+        let mut f = File::create(a.output_dir.join("test.md")).expect("error create md file");
         f.write_all(unindent(content).as_bytes())
             .expect("error writing md file");
 
         a
     }
 
-    pub fn running<F>(&self, cmd: F) -> &Self where
+    pub fn running<F>(&self, cmd: F) -> &Self
+    where
         F: for<'cwd> Fn(&'cwd Path) -> CliAssert,
     {
         cmd(&self.output_dir).unwrap();
@@ -115,8 +121,7 @@ impl Assert {
     }
 
     pub fn creates(&self, fa: FileAssert) -> &Self {
-        fa.context(self.output_dir.to_owned())
-            .unwrap();
+        fa.context(self.output_dir.to_owned()).unwrap();
         self
     }
 }
@@ -148,14 +153,17 @@ impl FileAssert {
     }
 
     fn unwrap(self) {
-        let dir = self.working_dir.expect(&format!("No working dir set for `{}`", self.path));
+        let dir = self
+            .working_dir
+            .expect(&format!("No working dir set for `{}`", self.path));
         let path = dir.join(&self.path);
 
         let mut f = File::open(&path).expect(&format!("no file at {:?}", path));
 
         if let Some(expected_content) = self.content {
             let mut content = String::new();
-            f.read_to_string(&mut content).expect(&format!("failed to read {:?}", path));
+            f.read_to_string(&mut content)
+                .expect(&format!("failed to read {:?}", path));
 
             let diff = Changeset::new(&content, &unindent(&expected_content), "\n");
             if diff.distance > 0 {
